@@ -1,21 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI Yoga Meal Planner</title>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Personalized Food Plan</title>
   <script src="https://cdn.tailwindcss.com"></script>
-
   <style>
-    /* Custom styles */
     body {
-      background: linear-gradient(to bottom right, #e0f2fe, #f0fdfa);
       font-family: 'Inter', sans-serif;
+      background-color: #f7f9fc;
+      min-height: 100vh;
     }
     .card {
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-      border-radius: 1rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      border-radius: 1.5rem;
+      transition: all 0.3s ease;
     }
     .loader {
       border-top-color: #3b82f6;
@@ -27,259 +26,228 @@
     }
   </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-center p-4">
+<body class="p-4 md:p-8">
 
-  <div class="w-full max-w-4xl bg-white p-8 card">
-    <h1 class="text-3xl font-extrabold text-center text-blue-700 mb-6">🧘‍♀️ AI Yoga Meal Planner</h1>
-    <p class="text-center text-gray-600 mb-6">Generate a personalized 7-day yoga-friendly meal plan tailored to your goals and dietary preferences.</p>
+  <div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <header class="text-center mb-10">
+      <h1 class="text-4xl font-extrabold text-blue-600">Premium Food Plan Generator</h1>
+      <p class="text-lg text-gray-600 mt-2">Generate your personalized, 7-day meal plan and shopping list using AI.</p>
+    </header>
 
-    <!-- Inputs -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-      <div>
-        <label for="goal" class="block text-sm font-semibold text-gray-700 mb-1">Goal</label>
-        <select id="goal" class="w-full p-2 border rounded-lg focus:ring focus:ring-blue-200">
-          <option value="">Select Goal</option>
-          <option value="Weight Loss">Weight Loss</option>
-          <option value="Muscle Gain">Muscle Gain</option>
-          <option value="Balanced">Balanced Health</option>
-          <option value="Detox">Detox</option>
-        </select>
+    <!-- Input Panel -->
+    <div id="input-panel" class="bg-white p-6 card mb-10">
+      <h2 class="text-2xl font-semibold mb-6 text-gray-800 border-b pb-3">Your Health Profile</h2>
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div>
+          <label for="goal" class="block text-sm font-medium text-gray-700 mb-2">Primary Goal</label>
+          <select id="goal" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+            <option value="Weight Loss">Weight Loss (Calorie Deficit)</option>
+            <option value="Muscle Gain">Muscle Gain (High Protein)</option>
+            <option value="Maintenance">Healthy Maintenance</option>
+            <option value="Energy Boost">Energy & Focus Boost</option>
+          </select>
+        </div>
+        <div>
+          <label for="diet" class="block text-sm font-medium text-gray-700 mb-2">Dietary Type</label>
+          <select id="diet" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+            <option value="Mediterranean">Mediterranean</option>
+            <option value="Keto">Keto / Low-Carb</option>
+            <option value="Vegan">Vegan / Plant-Based</option>
+            <option value="Standard/Balanced">Standard & Balanced</option>
+          </select>
+        </div>
+        <div class="md:col-span-2">
+          <label for="allergies" class="block text-sm font-medium text-gray-700 mb-2">Allergies/Dislikes (Comma-Separated)</label>
+          <input type="text" id="allergies" value="dairy, peanuts" placeholder="e.g., dairy, peanuts, fish"
+            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+        </div>
       </div>
-      <div>
-        <label for="diet" class="block text-sm font-semibold text-gray-700 mb-1">Diet Type</label>
-        <select id="diet" class="w-full p-2 border rounded-lg focus:ring focus:ring-blue-200">
-          <option value="">Select Diet</option>
-          <option value="Vegetarian">Vegetarian</option>
-          <option value="Vegan">Vegan</option>
-          <option value="Keto">Keto</option>
-          <option value="High-Protein">High Protein</option>
-          <option value="Mediterranean">Mediterranean</option>
-        </select>
-      </div>
-      <div>
-        <label for="allergies" class="block text-sm font-semibold text-gray-700 mb-1">Allergies / Avoid</label>
-        <input id="allergies" type="text" placeholder="e.g. nuts, gluten" class="w-full p-2 border rounded-lg focus:ring focus:ring-blue-200" />
-      </div>
-    </div>
-
-    <div class="flex justify-center mb-6">
-      <button id="generate-btn" onclick="generatePlan()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-lg transition-all disabled:opacity-50">
-        Generate Plan
+      <button onclick="generatePlan()" id="generate-btn"
+        class="mt-8 w-full py-3 px-4 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition duration-200 focus:outline-none focus:ring-4 focus:ring-blue-300 disabled:opacity-50">
+        Generate 7-Day Plan & Shopping List
       </button>
     </div>
 
     <!-- Loader -->
-    <div id="loader" class="hidden flex flex-col items-center justify-center mb-6">
-      <div class="loader rounded-full h-10 w-10 border-b-2 border-blue-600 mb-2"></div>
-      <p class="text-blue-600 font-medium">Generating your plan...</p>
+    <div id="loader" class="text-center py-10 hidden">
+      <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mx-auto mb-4"></div>
+      <p class="text-blue-600 font-semibold">Generating your custom plan...</p>
+      <p class="text-sm text-gray-500 mt-2">Please wait a few seconds while AI creates your meal plan.</p>
     </div>
 
-    <!-- Results -->
-    <div id="results-container" class="hidden">
-      <h2 class="text-2xl font-bold text-blue-700 mb-3">🍱 Weekly Meal Plan</h2>
-      <div class="overflow-x-auto mb-6">
-        <table class="min-w-full border border-gray-200 rounded-lg overflow-hidden">
-          <thead class="bg-blue-100">
-            <tr>
-              <th class="px-3 py-2 text-left text-sm font-bold text-blue-700 border-r">Day</th>
-              <th class="px-3 py-2 text-left text-sm font-bold text-blue-700 border-r">Breakfast</th>
-              <th class="px-3 py-2 text-left text-sm font-bold text-blue-700 border-r">Lunch</th>
-              <th class="px-3 py-2 text-left text-sm font-bold text-blue-700">Dinner</th>
-            </tr>
-          </thead>
-          <tbody id="weekly-plan-output"></tbody>
-        </table>
+    <!-- Results Container -->
+    <div id="results-container" class="grid grid-cols-1 lg:grid-cols-3 gap-8 hidden">
+      <!-- Shopping List -->
+      <div class="lg:col-span-1 bg-white p-6 card h-fit sticky top-4">
+        <h2 class="text-2xl font-semibold text-green-700 mb-4 border-b pb-3 flex justify-between items-center">
+          🛒 Consolidated Shopping List
+          <button id="copy-btn" class="text-sm bg-gray-100 hover:bg-gray-200 text-gray-600 py-1 px-3 rounded-full transition" onclick="copyShoppingList()">Copy List</button>
+        </h2>
+        <ul id="shopping-list-output" class="space-y-2 text-gray-700 list-disc pl-5"></ul>
       </div>
 
-      <h2 class="text-2xl font-bold text-blue-700 mb-2">🛒 Shopping List</h2>
-      <ul id="shopping-list-output" class="list-disc list-inside bg-blue-50 rounded-lg p-4 mb-4"></ul>
-
-      <button id="copy-btn" onclick="copyShoppingList()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-all">Copy List</button>
+      <!-- Meal Plan Table -->
+      <div class="lg:col-span-2 bg-white p-6 card overflow-x-auto">
+        <h2 class="text-2xl font-semibold text-blue-700 mb-4 border-b pb-3">🗓️ 7-Day Meal Schedule</h2>
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-blue-50">
+            <tr>
+              <th class="px-3 py-3 text-left text-xs font-medium text-blue-700 uppercase tracking-wider w-1/12">Day</th>
+              <th class="px-3 py-3 text-left text-xs font-medium text-blue-700 uppercase tracking-wider w-3/12">Breakfast</th>
+              <th class="px-3 py-3 text-left text-xs font-medium text-blue-700 uppercase tracking-wider w-4/12">Lunch</th>
+              <th class="px-3 py-3 text-left text-xs font-medium text-blue-700 uppercase tracking-wider w-4/12">Dinner</th>
+            </tr>
+          </thead>
+          <tbody id="weekly-plan-output" class="bg-white divide-y divide-gray-200"></tbody>
+        </table>
+      </div>
     </div>
   </div>
 
   <script type="module">
-    // FIX 4: Set apiKey to empty string for environment authentication.
-    const apiKey = ""; 
-    
-    // FIX 1: Define the strict JSON schema required for robust structured output.
-    const planSchema = {
-        type: "OBJECT",
-        properties: {
-            weeklyPlan: {
-                type: "ARRAY",
-                description: "An array of 7 daily meal plans. Each entry must be an object with dayNumber, breakfast, lunch, and dinner fields.",
-                items: {
-                    type: "OBJECT",
-                    properties: {
-                        dayNumber: { "type": "INTEGER" },
-                        breakfast: { "type": "STRING", "description": "The breakfast meal, including a name and description." },
-                        lunch: { "type": "STRING", "description": "The lunch meal, including a name and description." },
-                        dinner: { "type": "STRING", "description": "The dinner meal, including a name and description." }
-                    },
-                    required: ["dayNumber", "breakfast", "lunch", "dinner"]
-                }
-            },
-            shoppingList: {
-                type: "ARRAY",
-                items: { "type": "STRING" },
-                description: "A single, consolidated, itemized list of ALL ingredients needed for the entire 7-day meal plan, including quantities (e.g., '1 lb rice', '2 cups spinach')."
-            }
-        },
-        required: ["weeklyPlan", "shoppingList"]
-    };
+    const apiKey = "AIzaSyC_SU6tE8Ret2FTBbiIUjkBS5eItQ0NeP8"; // 🔑 Replace this with a valid API key
 
+    const generatePlan = async () => {
+      const goal = document.getElementById('goal')?.value;
+      const diet = document.getElementById('diet')?.value;
+      const allergies = document.getElementById('allergies')?.value.trim();
 
-    async function generatePlan() {
-      const goal = document.getElementById('goal').value;
-      const diet = document.getElementById('diet').value;
-      const allergies = document.getElementById('allergies').value.trim();
-
-      // FIX 2: Replaced alert() with renderError for compliance.
       if (!goal || !diet) {
-        renderError("Please select both Goal and Diet Type.");
+        alert("Please select both Goal and Diet Type.");
         return;
       }
 
       showLoader();
 
-      const systemPrompt = `
-        You are a certified yoga nutrition coach and chef. Your task is to design a complete, 7-day, day-by-day meal plan. The plan must be anti-inflammatory, focused on light digestion, and strictly adhere to the user's goals and dietary preferences. For every meal (breakfast, lunch, dinner), provide a creative, descriptive meal name and a brief description. Finally, generate one comprehensive shopping list for all 7 days.
-      `;
+      const systemPrompt = `You are a certified nutrition coach and chef. Design a 7-day meal plan matching the user's goals and diet. Each day must have breakfast, lunch, and dinner with a short description. Also include a combined shopping list for all 7 days.`;
 
-      const userPrompt = `
+      const userQuery = `
         Goal: ${goal}
         Dietary Type: ${diet}
-        Allergies/Avoid: ${allergies || "None"}
-        Ensure the meal plan is nutritionally sound, easy to prepare (maximum 30-45 minutes prep time per meal), and delicious. Respond ONLY with the JSON structure defined in the schema.
-      `;
+        Allergies/Avoid: ${allergies || 'None'}
+        Please respond ONLY with valid JSON using this format:
+        {
+          "weeklyPlan": [
+            {"dayNumber": 1, "breakfast": "", "lunch": "", "dinner": ""},
+            ...
+          ],
+          "shoppingList": ["item1", "item2", ...]
+        }`;
 
-      // FIX 1: Use the recommended model for structured output.
-      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-      
+      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
       const payload = {
-        contents: [{ parts: [{ text: userPrompt }] }],
+        contents: [{ parts: [{ text: userQuery }] }],
         systemInstruction: { parts: [{ text: systemPrompt }] },
-        generationConfig: { 
-            responseMimeType: "application/json",
-            responseSchema: planSchema 
-        }
+        generationConfig: { responseMimeType: "application/json" }
       };
-      
-      const maxRetries = 3;
-      let delay = 1000;
 
-      for (let i = 0; i < maxRetries; i++) {
-        try {
-          const response = await fetch(apiUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-          });
+      try {
+        let attempts = 0;
+        let maxAttempts = 3;
+        let result = null;
 
-          if (!response.ok) {
-            const errMsg = await response.text();
-            throw new Error(`HTTP ${response.status}: ${errMsg}`);
+        while (attempts < maxAttempts && !result) {
+          attempts++;
+          try {
+            const response = await fetch(apiUrl, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload)
+            });
+            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+            const data = await response.json();
+            const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (!text) throw new Error("No text returned from API.");
+            result = JSON.parse(text);
+          } catch (err) {
+            console.warn(`Attempt ${attempts} failed:`, err.message);
+            if (attempts === maxAttempts) throw err;
           }
-
-          const data = await response.json();
-          const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-
-          if (!text) throw new Error("No text returned from API.");
-
-          const result = JSON.parse(text);
-          renderPlan(result.weeklyPlan);
-          renderShoppingList(result.shoppingList);
-          hideLoader();
-          document.getElementById('results-container').classList.remove('hidden');
-          return; 
-        } catch (error) {
-          if (i === maxRetries - 1) {
-            renderError(`Failed to generate the plan after ${maxRetries} tries. Details: ${error.message}.`);
-            hideLoader();
-            return;
-          }
-          await new Promise(resolve => setTimeout(resolve, delay));
-          delay *= 2; 
         }
-      }
-    }
 
-    function renderPlan(weeklyPlan) {
-      const tbody = document.getElementById("weekly-plan-output");
-      tbody.innerHTML = "";
-      weeklyPlan.forEach((day) => {
-        const row = document.createElement("tr");
-        row.className = "hover:bg-blue-50 transition";
+        // Render results safely
+        if (result?.weeklyPlan && document.getElementById('weekly-plan-output')) renderPlan(result.weeklyPlan);
+        if (result?.shoppingList && document.getElementById('shopping-list-output')) renderShoppingList(result.shoppingList);
+        hideLoader();
+        const resultsContainer = document.getElementById('results-container');
+        if (resultsContainer) resultsContainer.classList.remove('hidden');
+
+      } catch (error) {
+        console.error(error);
+        hideLoader();
+        renderError("Failed to generate the plan after 3 tries. Please check your API key or try again later.");
+      }
+    };
+
+    const renderPlan = (weeklyPlan) => {
+      const tbody = document.getElementById('weekly-plan-output');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+      weeklyPlan.forEach(day => {
+        const row = document.createElement('tr');
+        row.className = 'hover:bg-blue-50 transition duration-150';
         row.innerHTML = `
-          <td class="px-3 py-2 border text-blue-700 font-semibold">Day ${day.dayNumber}</td>
-          <td class="px-3 py-2 border text-gray-700">${day.breakfast}</td>
-          <td class="px-3 py-2 border text-gray-700">${day.lunch}</td>
-          <td class="px-3 py-2 border text-gray-700">${day.dinner}</td>
-        `;
+          <td class="px-3 py-3 text-sm font-bold text-blue-700 border-r">Day ${day.dayNumber}</td>
+          <td class="px-3 py-3 text-sm text-gray-600">${day.breakfast}</td>
+          <td class="px-3 py-3 text-sm text-gray-600">${day.lunch}</td>
+          <td class="px-3 py-3 text-sm text-gray-600">${day.dinner}</td>`;
         tbody.appendChild(row);
       });
-    }
+    };
 
-    function renderShoppingList(shoppingList) {
-      const ul = document.getElementById("shopping-list-output");
-      ul.innerHTML = "";
-      shoppingList.forEach((item) => {
-        const li = document.createElement("li");
-        li.className = "text-gray-700 text-sm py-1 border-b last:border-b-0";
+    const renderShoppingList = (shoppingList) => {
+      const ul = document.getElementById('shopping-list-output');
+      if (!ul) return;
+      ul.innerHTML = '';
+      shoppingList.forEach(item => {
+        const li = document.createElement('li');
+        li.className = 'text-gray-700 text-sm py-1 border-b last:border-b-0';
         li.textContent = item;
         ul.appendChild(li);
       });
-    }
+    };
 
-    function showLoader() {
-      document.getElementById("loader").classList.remove("hidden");
-      document.getElementById("generate-btn").disabled = true;
-      document.getElementById("results-container").classList.add("hidden");
-    }
+    const showLoader = () => {
+      const loader = document.getElementById('loader');
+      const btn = document.getElementById('generate-btn');
+      if (loader) loader.classList.remove('hidden');
+      if (btn) btn.disabled = true;
+      const results = document.getElementById('results-container');
+      if (results) results.classList.add('hidden');
+    };
 
-    function hideLoader() {
-      document.getElementById("loader").classList.add("hidden");
-      document.getElementById("generate-btn").disabled = false;
-    }
+    const hideLoader = () => {
+      const loader = document.getElementById('loader');
+      const btn = document.getElementById('generate-btn');
+      if (loader) loader.classList.add('hidden');
+      if (btn) btn.disabled = false;
+    };
 
-    function renderError(msg) {
-      const results = document.getElementById("results-container");
+    const renderError = (msg) => {
+      const results = document.getElementById('results-container');
+      if (!results) {
+        alert(msg);
+        return;
+      }
       results.innerHTML = `
-        <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 card">
+        <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 card" role="alert">
           <p class="font-bold">Error</p><p>${msg}</p>
         </div>`;
-      results.classList.remove("hidden");
-    }
+      results.classList.remove('hidden');
+    };
 
-    // FIX 3: Updated to use document.execCommand('copy') for better compatibility.
-    function copyShoppingList() {
-      const list = Array.from(document.querySelectorAll("#shopping-list-output li"))
-        .map((li) => li.textContent)
-        .join("\n");
-        
-      const tempTextArea = document.createElement('textarea');
-      tempTextArea.value = list;
-      document.body.appendChild(tempTextArea);
-      tempTextArea.select();
-      
-      let success = false;
-      try {
-        success = document.execCommand('copy');
-      } catch (err) {
-        console.error('Failed to copy text using execCommand', err);
-      } finally {
-        document.body.removeChild(tempTextArea);
-      }
-
-      const btn = document.getElementById("copy-btn");
-      if (success) {
-        btn.textContent = "Copied!";
-      } else {
-        btn.textContent = "Copy Failed";
-      }
-      setTimeout(() => (btn.textContent = "Copy List"), 2000);
-    }
+    const copyShoppingList = () => {
+      const list = Array.from(document.querySelectorAll('#shopping-list-output li')).map(li => li.textContent).join('\n');
+      navigator.clipboard.writeText(list).then(() => {
+        const btn = document.getElementById('copy-btn');
+        if (btn) {
+          btn.textContent = 'Copied!';
+          setTimeout(() => btn.textContent = 'Copy List', 2000);
+        }
+      });
+    };
 
     window.generatePlan = generatePlan;
     window.copyShoppingList = copyShoppingList;
